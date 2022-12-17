@@ -1,19 +1,21 @@
-[
 {
-  "modid": "RelocationFMP",
-  "name": "RelocationFMP",
-  "parent":"ForgeRelocation",
-  "description":"Adds FMP support to ForgeRelocation",
-  "version": "@VERSION@.@BUILD_NUMBER@",
-  "mcversion": "@MC_VERSION@",
-  "url": "...",
-  "authors": [ "MrTJP" ],
-  "credits": "",
-  "logoFile": "",
-  "screenshots": [],
-  "requiredMods": [ "ForgeRelocation", "ForgeMultipart" ],
-  "dependencies": [ "ForgeRelocation", "ForgeMultipart" ],
-  "dependants" : [],
-  "useDependencyInformation": true
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "Adds FMP support to ForgeRelocation",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "",
+		"updateUrl": "",
+		"authorList": ["MrTJP"],
+		"credits": "",
+		"logoFile": "",
+		"screenshots": [],
+		"parent": "ForgeRelocation",
+		"requiredMods": ["ForgeRelocation", "ForgeMultipart"],
+		"dependencies": ["ForgeRelocation", "ForgeMultipart"],
+		"dependants": [],
+		"useDependencyInformation": true
+	}]
 }
-]
