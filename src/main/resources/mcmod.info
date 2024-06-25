@@ -12,10 +12,6 @@
 		"credits": "",
 		"logoFile": "",
 		"screenshots": [],
-		"parent": "ForgeRelocation",
-		"requiredMods": ["ForgeRelocation", "ForgeMultipart"],
-		"dependencies": ["ForgeRelocation", "ForgeMultipart"],
-		"dependants": [],
-		"useDependencyInformation": true
+		"parent": "ForgeRelocation"
 	}]
 }
