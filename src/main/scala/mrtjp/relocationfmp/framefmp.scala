@@ -116,7 +116,7 @@ class FramePart
   override def renderStatic(pos: Vector3, pass: Int) = pass match {
     case 0 =>
       TextureUtils.bindAtlas(0)
-      CCRenderState.instance().setBrightness(world, x, y, z)
+      CCRenderState.instance().setBrightnessInstance(world, x, y, z)
       API.renderFrame(pos.x, pos.y, pos.z, ~sideOcclusionMask)
       true
     case _ => false
