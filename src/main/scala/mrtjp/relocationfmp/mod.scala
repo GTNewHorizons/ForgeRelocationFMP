@@ -18,14 +18,15 @@ import org.apache.logging.log4j.LogManager
   useMetadata = true,
   modLanguage = "scala",
   acceptedMinecraftVersions = "[1.7.10]",
-  dependencies = "required-after:ForgeRelocation;required-after:ForgeMultipart",
+  dependencies =
+    "required-after:CodeChickenCore@[1.4.3,);required-after:ForgeRelocation;required-after:ForgeMultipart",
   name = RelocationFMPMod.modName,
   version = RelocationFMPMod.version
 )
 object RelocationFMPMod {
   final val modID = "RelocationFMP"
   final val modName = "RelocationFMP"
-  final val version = "GRADLETOKEN_VERSION"
+  final val version = Tags.VERSION
 
   val log = LogManager.getFormatterLogger(modID)
 
