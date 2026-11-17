@@ -95,10 +95,6 @@ class FramePart
       effectRenderer: EffectRenderer
   ): Unit = IconHitEffects.addDestroyEffects(this, effectRenderer)
 
-  @SideOnly(Side.CLIENT)
-  override def addDestroyEffects(effectRenderer: EffectRenderer): Unit =
-    IconHitEffects.addDestroyEffects(this, effectRenderer)
-
   override def getOcclusionBoxes: java.lang.Iterable[Cuboid6] = {
     FramePart.sideOccludeTest match {
       case -1 => Collections.emptyList[Cuboid6]()
