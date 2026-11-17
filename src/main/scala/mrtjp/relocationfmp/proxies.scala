@@ -23,7 +23,7 @@ class RelocationFMPProxy_server {
 
   def init() {
     MultipartGenerator.registerPassThroughInterface(classOf[IFrame].getName)
-    MultiPartRegistry.registerParts((_, _) => new FramePart, "rfmp_frame")
+    MultiPartRegistry.registerPartFactory(FramePartFactory, "rfmp_frame")
     MultiPartRegistry.registerConverter(FrameBlockConverter)
   }
 
