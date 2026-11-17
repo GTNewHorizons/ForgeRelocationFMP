@@ -90,6 +90,12 @@ class FramePart
   ): Unit = IconHitEffects.addHitEffects(this, hit, effectRenderer)
 
   @SideOnly(Side.CLIENT)
+  override def addDestroyEffects(
+      hit: MovingObjectPosition,
+      effectRenderer: EffectRenderer
+  ): Unit = IconHitEffects.addDestroyEffects(this, effectRenderer)
+
+  @SideOnly(Side.CLIENT)
   override def addDestroyEffects(effectRenderer: EffectRenderer): Unit =
     IconHitEffects.addDestroyEffects(this, effectRenderer)
 
