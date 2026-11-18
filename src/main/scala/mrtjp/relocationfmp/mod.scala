@@ -19,7 +19,7 @@ import org.apache.logging.log4j.LogManager
   modLanguage = "scala",
   acceptedMinecraftVersions = "[1.7.10]",
   dependencies =
-    "required-after:CodeChickenCore@[1.4.3,);required-after:ForgeRelocation;required-after:ForgeMultipart",
+    "required-after:CodeChickenCore@[1.4.3,);required-after:ForgeRelocation;required-after:ForgeMultipart@[2.0.0,)",
   name = RelocationFMPMod.modName,
   version = RelocationFMPMod.version
 )

@@ -5,26 +5,32 @@
  */
 package mrtjp.relocationfmp
 
-import codechicken.lib.raytracer.ExtendedMOP
+import codechicken.lib.data.MCDataInput
+import codechicken.lib.raytracer.{ExtendedMOP, IndexedCuboid6}
 import codechicken.lib.render.{CCRenderState, TextureUtils}
 import codechicken.lib.vec.Rotation._
 import codechicken.lib.vec.Vector3._
 import codechicken.lib.vec.{BlockCoord, Cuboid6, Rotation, Vector3}
 import codechicken.microblock.CommonMicroblock
-import codechicken.multipart.MultiPartRegistry.IPartConverter
+import codechicken.multipart.MultiPartRegistry.{IPartConverter, IPartFactory2}
 import codechicken.multipart._
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import mrtjp.core.world.WorldLib
 import mrtjp.mcframes.api.MCFramesAPI.{instance => API}
 import mrtjp.mcframes.api.{IFrame, IFramePlacement}
 import mrtjp.relocation.api.ITileMover
+import net.minecraft.block.Block
+import net.minecraft.client.particle.EffectRenderer
+import net.minecraft.client.renderer.RenderBlocks
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.{MovingObjectPosition, Vec3}
 import net.minecraft.world.World
 
-import scala.collection.JavaConversions._
+import java.util.{ArrayList => JArrayList, Collections}
+import scala.collection.JavaConverters._
 
 class FramePart
     extends TMultiPart
@@ -58,17 +64,41 @@ class FramePart
         mop.blockZ
       )
 
-  override def getDrops = Seq(new ItemStack(API.getFrameBlock))
+  override def getDrops: java.lang.Iterable[ItemStack] =
+    Collections.singletonList(new ItemStack(API.getFrameBlock))
   override def pickItem(hit: MovingObjectPosition) = new ItemStack(
     API.getFrameBlock
   )
 
   override def getBounds = Cuboid6.full
 
-  override def getOcclusionBoxes = {
+  // Explicit trait forwarders: TMultiPart's empty methods win over the FMP 2 interfaces.
+  override def getSubParts: java.lang.Iterable[IndexedCuboid6] =
+    JCuboidPart.subParts(this)
+
+  override def getCollisionBoxes: java.lang.Iterable[Cuboid6] =
+    JCuboidPart.collisionBoxes(this)
+
+  @SideOnly(Side.CLIENT)
+  override def drawBreaking(renderBlocks: RenderBlocks): Unit =
+    JCuboidPart.renderBreaking(this, renderBlocks)
+
+  @SideOnly(Side.CLIENT)
+  override def addHitEffects(
+      hit: MovingObjectPosition,
+      effectRenderer: EffectRenderer
+  ): Unit = IconHitEffects.addHitEffects(this, hit, effectRenderer)
+
+  @SideOnly(Side.CLIENT)
+  override def addDestroyEffects(
+      hit: MovingObjectPosition,
+      effectRenderer: EffectRenderer
+  ): Unit = IconHitEffects.addDestroyEffects(this, effectRenderer)
+
+  override def getOcclusionBoxes: java.lang.Iterable[Cuboid6] = {
     FramePart.sideOccludeTest match {
-      case -1 => Seq()
-      case s  => Seq(FramePart.aBounds(s))
+      case -1 => Collections.emptyList[Cuboid6]()
+      case s  => Collections.singletonList(FramePart.aBounds(s))
     }
   }
 
@@ -90,15 +120,18 @@ class FramePart
 
     // modified normal occlusion test that also tests collision boxes
     if (FramePart.sideOccludeTest != -1) {
-      var boxes = Seq[Cuboid6]()
+      val boxes = new JArrayList[Cuboid6]()
+      def add(it: java.lang.Iterable[Cuboid6]) = it.asScala.foreach(boxes.add)
       if (npart.isInstanceOf[JNormalOcclusion])
-        boxes ++= npart.asInstanceOf[JNormalOcclusion].getOcclusionBoxes
+        add(npart.asInstanceOf[JNormalOcclusion].getOcclusionBoxes)
       if (npart.isInstanceOf[JPartialOcclusion])
-        boxes ++= npart.asInstanceOf[JPartialOcclusion].getPartialOcclusionBoxes
-      boxes ++= npart.getCollisionBoxes
+        add(npart.asInstanceOf[JPartialOcclusion].getPartialOcclusionBoxes)
+      add(npart.getCollisionBoxes)
 
-      NormalOcclusionTest(boxes, getOcclusionBoxes)
-    } else super.occlusionTest(npart)
+      NormalOcclusionTest.testBoxes(boxes, getOcclusionBoxes)
+    } else
+      // former TNormalOcclusion super chain
+      NormalOcclusionTest.apply(this, npart) && super.occlusionTest(npart)
   }
 
   override def collisionRayTrace(from: Vec3, to: Vec3) = {
@@ -140,8 +173,21 @@ object FramePart {
   }
 }
 
+object FramePartFactory extends IPartFactory2 {
+  override def createPart(name: String, nbt: NBTTagCompound): TMultiPart =
+    new FramePart
+  override def createPart(name: String, packet: MCDataInput): TMultiPart =
+    new FramePart
+  // the legacy function registration also answered client previews
+  override def createPartForClientPreview(
+      name: String,
+      nbt: NBTTagCompound
+  ): TMultiPart = new FramePart
+}
+
 object FrameBlockConverter extends IPartConverter {
-  override def blockTypes = Seq(API.getFrameBlock)
+  override def blockTypes: java.lang.Iterable[Block] =
+    Collections.singletonList(API.getFrameBlock)
 
   override def convert(world: World, pos: BlockCoord) =
     if (world.getBlock(pos.x, pos.y, pos.z) == API.getFrameBlock) new FramePart
