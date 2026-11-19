@@ -1,4 +1,6 @@
 dependencies {
-    api 'com.github.GTNewHorizons:ForgeMultipart:1.5.0:dev'
-    api 'com.github.GTNewHorizons:ForgeRelocation:0.2.0:dev'
+    api 'com.github.GTNewHorizons:ForgeMultipart:1.8.0:dev'
+    api 'com.github.GTNewHorizons:ForgeRelocation:0.4.0:dev'
+    implementation 'com.github.GTNewHorizons:CodeChickenCore:1.5.0:dev'
+    implementation 'com.github.GTNewHorizons:MrTJPCore:1.4.0:dev'
 }
